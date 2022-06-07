@@ -11,8 +11,11 @@ interface PersonDao {
     @Query("SELECT * FROM cartoonperson")
     suspend fun getAllPersons(): List<CartoonPerson>
 
-    @Query("SELECT * FROM cartoonperson WHERE idApi BETWEEN 1 AND 20")
-    suspend fun getFirstTwenty(): List<CartoonPerson>
+//    @Query("SELECT * FROM cartoonperson WHERE idApi BETWEEN 1 AND 20")
+//    suspend fun getSomePersons(): List<CartoonPerson>
+
+    @Query("SELECT * FROM cartoonperson LIMIT :limit OFFSET :offset")
+    suspend fun getSomePersons(limit: Int, offset: Int): List<CartoonPerson>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPersons(list: List<CartoonPerson>)

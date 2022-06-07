@@ -108,6 +108,7 @@ class ListFragment : Fragment() {
                // uploadCashPerson()
                 val tempList = personRepository.getUser(pageForRequest)
                 val listPersons = tempList.results
+                Toast.makeText(requireContext(),"${listPersons.size}", Toast.LENGTH_LONG).show()
                 personDao.insertPersons(listPersons)
                 val content = listPersons.map {
                     ItemType.Content(it)

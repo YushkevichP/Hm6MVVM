@@ -12,15 +12,13 @@ import retrofit2.http.Query
 interface RickMortyApi {
 
     @GET("character")
-    suspend fun getUsers(
+    suspend fun getUsersFromApi(
         @Query("page") page: Int,
-
         ): wrapperForListFromApi
 
     @GET("character/{id}")
-    suspend fun getUserDetails(
+    suspend fun getPersonDetailsFromApi(
         @Path("id") id: Int, // Path -подставление значения в какой-то запрос.
-        //
     ): PersonDetails
 
 }

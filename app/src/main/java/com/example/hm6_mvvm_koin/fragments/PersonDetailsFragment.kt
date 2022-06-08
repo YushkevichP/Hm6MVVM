@@ -29,6 +29,7 @@ class PersonDetailsFragment : Fragment() {
 
     private val args by navArgs<PersonDetailsFragmentArgs>()
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -46,7 +47,7 @@ class PersonDetailsFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             val id = args.keyId
-            val details = personRepository.getPersonDetails(id)
+            val details = personRepository.fetchPersonDetails(id)
 
             with(binding) {
                 imageUserFragment.load(details.avatarApiDetails)

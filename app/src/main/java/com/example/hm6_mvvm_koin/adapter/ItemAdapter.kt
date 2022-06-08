@@ -1,4 +1,5 @@
 package com.example.hm6_mvvm_koin
+
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -21,7 +22,8 @@ class ItemAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
             is ItemType.Content -> TYPE_CONTENT
-            ItemType.Loading -> TYPE_LOADING
+            is ItemType.Loading -> TYPE_LOADING
+            is ItemType.Error -> TYPE_ERROR
         }
     }
 
@@ -58,6 +60,7 @@ class ItemAdapter(
 
         private const val TYPE_CONTENT = 0
         private const val TYPE_LOADING = 1
+        private const val TYPE_ERROR = 3
 
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ItemType<CartoonPerson>>() {
             override fun areItemsTheSame(

@@ -7,6 +7,7 @@ sealed class ItemType<out T> {
 
     object Loading : ItemType<Nothing>()
 
+    data class Error(val throwable: Throwable) : ItemType<Nothing>()
 }
 
 

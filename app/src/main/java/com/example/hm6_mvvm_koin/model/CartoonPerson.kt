@@ -19,4 +19,7 @@ data class CartoonPerson(
     @ColumnInfo(name = "image")
     @SerializedName("image")// используется, чтоб переписать название из json в наше название.
     val imageApi: String,
+
+    @ColumnInfo(name = "page")
+    val page: Int,
 )

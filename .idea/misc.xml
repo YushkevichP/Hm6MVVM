@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/pavel/HM6_MVVM_Koin/app/src/main/res/layout/fragment_list.xml" value="0.1" />
+        <entry key="..\:/Users/pavel/HM6_MVVM_Koin/app/src/main/res/layout/item_loading.xml" value="0.35052083333333334" />
         <entry key="..\:/Users/pavel/HM6_MVVM_Koin/app/src/main/res/layout/item_person.xml" value="0.35052083333333334" />
       </map>
     </option>

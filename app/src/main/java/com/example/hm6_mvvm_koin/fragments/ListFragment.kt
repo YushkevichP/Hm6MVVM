@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
@@ -53,19 +54,6 @@ class ListFragment : Fragment() {
         }
     }
 
-//    private val personRepository by lazy(LazyThreadSafetyMode.NONE) {
-//        ServiceLocator.provideRepository()
-//    }
-//
-//    private val personDao by lazy(LazyThreadSafetyMode.NONE) {
-//        requireContext().appDataBase.personDao()
-//    }
-
-//
-//    private var pageCounter = 1
-//
-//    private var listForSubmitRetrofit: List<ItemType<CartoonPerson>> = emptyList()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -74,16 +62,16 @@ class ListFragment : Fragment() {
         return FragmentListBinding.inflate(inflater, container, false)
             .also { _binding = it }
             .root
-
     }
 
     @SuppressLint("ShowToast")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // для первой подгрузки в список
         viewModel.onLoadMore()
 
-        // запихунть куда-то, чтоб не отобрадалось постаянно / или в тру ничего не делать.
+        // запихунть куда-то, чтоб не отобра;алось постаянно / или в тру ничего не делать.
         requireContext().networkChanges
             .onEach {
                 when (it) {
@@ -95,7 +83,7 @@ class ListFragment : Fragment() {
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-
+        //recucler init
         with(binding) {
             val layoutManager = LinearLayoutManager(requireContext())
             recyclerView.layoutManager = layoutManager
@@ -109,16 +97,25 @@ class ListFragment : Fragment() {
                     viewModel.onLoadMore()
                 }
                 .launchIn(viewLifecycleOwner.lifecycleScope)
-
         }
+
         viewModel.dataFlow
             .onEach {
+
                 personAdapter.submitList(it.map {
                     ItemType.Content(it)
                 } + ItemType.Loading)
+
                 binding.swipeLayout.isRefreshing = false
             }
             .launchIn(viewLifecycleOwner.lifecycleScope)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
 
 
 //        checkNetWorkState()
@@ -126,13 +123,19 @@ class ListFragment : Fragment() {
 //        loadNewPage(pageCounter)
 //        swipeRefresh()
 
-    }
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-}
 
+//    private val personRepository by lazy(LazyThreadSafetyMode.NONE) {
+//        ServiceLocator.provideRepository()
+//    }
+//
+//    private val personDao by lazy(LazyThreadSafetyMode.NONE) {
+//        requireContext().appDataBase.personDao()
+//    }
+
+//
+//    private var pageCounter = 1
+//
+//    private var listForSubmitRetrofit: List<ItemType<CartoonPerson>> = emptyList()
 
 
 //    private fun checkNetWorkState() {

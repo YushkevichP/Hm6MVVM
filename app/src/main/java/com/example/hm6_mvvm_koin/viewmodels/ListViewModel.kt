@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hm6_mvvm_koin.PersonRepository
 import com.example.hm6_mvvm_koin.database.PersonDao
+import com.example.hm6_mvvm_koin.model.CartoonPerson
+import com.example.hm6_mvvm_koin.model.ItemType
+import com.example.hm6_mvvm_koin.model.LceState
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -19,36 +22,47 @@ class ListViewModel(
     private val loadMoreFlow = MutableSharedFlow<LoadState>(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
+    private var isRefreshed = false
+    private var cacheList = listOf<CartoonPerson>()
 
     val dataFlow = loadMoreFlow
         .filter { !isLoading }
         .onEach {
             isLoading = true
             if (it == LoadState.REFRESH) {
+                isRefreshed = true
                 currentPage = 1
-                // todo как занулить список если использууем runningReduce?
-            }
+            } else isRefreshed = false
         }
         .map {
-            runCatching {
-                delay(1000)
-                personRepository.getUser(currentPage).results
-            }
+            delay(1000)
+            personRepository.fetchPersons(currentPage)
                 .fold(
                     onSuccess = { it },
-                    onFailure = { emptyList() }
+                    onFailure = {
+                        (personDao.getSomePersons(PAGE_SIZE, 0, currentPage)) }
                 )
         }
         .onEach {
-            personDao.insertPersons(it)
+            personDao.insertPersons(it.map {
+                CartoonPerson(
+                    idApi = it.idApi,
+                    nameApi = it.nameApi,
+                    imageApi = it.imageApi,
+                    page = currentPage)
+            })
             isLoading = false
             currentPage++
         }
         .runningReduce { accumulator, value ->
-            accumulator + value
+            if (!isRefreshed) {
+                accumulator + value
+            } else value
+
         }
         .onStart {
-            emit(personDao.getSomePersons(PAGE_SIZE, 0))
+
+            emit(personDao.getSomePersons(PAGE_SIZE, 0, currentPage))
         }
         .shareIn(
             scope = viewModelScope,

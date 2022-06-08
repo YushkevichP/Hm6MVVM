@@ -1,5 +1,9 @@
 package com.example.hm6_mvvm_koin
 
+import android.app.Application
+import android.content.Context
+import com.example.hm6_mvvm_koin.database.PersonDao
+import com.example.hm6_mvvm_koin.database.appDataBase
 import com.example.hm6_mvvm_koin.retrofit.RickMortyApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -12,6 +16,8 @@ object ServiceLocator {
     private val rickMortyApi by lazy {
         provideRetrofit().create<RickMortyApi>()
     }
+
+
 
     fun provideRepository(): PersonRepository {
         return PersonRepository(rickMortyApi)
@@ -27,6 +33,10 @@ object ServiceLocator {
             .addConverterFactory(GsonConverterFactory.create()) // преобразует json обхекты в наши оюъекты
             .client(client)
             .build()
+    }
+
+     fun provideDatabase(context: Context) {
+        context.appDataBase.personDao()
     }
 }
 

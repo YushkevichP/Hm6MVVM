@@ -72,4 +72,11 @@ dependencies {
     kapt "androidx.room:room-compiler:$roomVersion"
     implementation "androidx.room:room-runtime:$roomVersion"
     implementation "androidx.room:room-ktx:$roomVersion"  //выдавало ошибку / нагуглил это
+
+    implementation "androidx.fragment:fragment-ktx:1.4.1"
+
+    //koin
+    def koinVersions  = "3.1.5"
+    implementation "io.insert-koin:koin-android:$koinVersions"
+
 }

@@ -14,13 +14,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
-import com.example.hm6_mvvm_koin.ServiceLocator
-
+import com.example.hm6_mvvm_koin.PersonRepository
 import com.example.hm6_mvvm_koin.databinding.FragmentPersonDetailsBinding
 import com.example.hm6_mvvm_koin.viewmodels.PersonDetailsViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PersonDetailsFragment : Fragment() {
@@ -31,17 +32,19 @@ class PersonDetailsFragment : Fragment() {
             "VIEW WAS DESTROYED"
         }
 
-    private val viewModel by viewModels<PersonDetailsViewModel> {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return PersonDetailsViewModel(
-                    ServiceLocator.provideRepository(),
-                   // requireContext().appDataBase.personDao()
-                ) as T
-            }
-        }
-    }
+ //   private val persontRepository by inject<PersonRepository>()
+    private val viewModel by viewModel<PersonDetailsViewModel>()
+
+//    private val viewModel by viewModels<PersonDetailsViewModel> {
+//        object : ViewModelProvider.Factory {
+//            @Suppress("UNCHECKED_CAST")
+//            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//                return PersonDetailsViewModel(
+//                    persontRepository,
+//                ) as T
+//            }
+//        }
+//    }
 
     private val args by navArgs<PersonDetailsFragmentArgs>()
 

@@ -6,23 +6,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.hm6_mvvm_koin.ItemAdapter
+import com.example.hm6_mvvm_koin.PersonRepository
 import com.example.hm6_mvvm_koin.R
-import com.example.hm6_mvvm_koin.ServiceLocator
-import com.example.hm6_mvvm_koin.database.appDataBase
+import com.example.hm6_mvvm_koin.database.AppDatabase
 import com.example.hm6_mvvm_koin.databinding.FragmentListBinding
 import com.example.hm6_mvvm_koin.model.ItemType
 import com.example.hm6_mvvm_koin.utilities.networkChanges
 import com.example.hm6_mvvm_koin.viewmodels.ListViewModel
 import kotlinx.coroutines.flow.*
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class ListFragment : Fragment() {
@@ -32,18 +34,22 @@ class ListFragment : Fragment() {
         get() = requireNotNull(_binding) {
             "View was destroyed"
         }
+    //denendancy injection
+//    private val persontRepository by inject<PersonRepository>()
+//    private val appDataBase by inject<AppDatabase>()
+    private val viewModel by viewModel<ListViewModel>()
 
-    private val viewModel by viewModels<ListViewModel> {
-        object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return ListViewModel(
-                    ServiceLocator.provideRepository(),
-                    requireContext().appDataBase.personDao()
-                ) as T
-            }
-        }
-    }
+//    private val viewModel by viewModels<ListViewModel> {
+//        object : ViewModelProvider.Factory {
+//            @Suppress("UNCHECKED_CAST")
+//            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+//                return ListViewModel(
+//                    persontRepository,
+//                    appDataBase.personDao()
+//                ) as T
+//            }
+//        }
+//    }
 
     private val personAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ItemAdapter(requireContext()) { item ->
@@ -71,7 +77,7 @@ class ListFragment : Fragment() {
         // для первой подгрузки в список
         viewModel.onLoadMore()
 
-        // запихунть куда-то, чтоб не отобра;алось постаянно / или в тру ничего не делать.
+        // запихунть куда-то, чтоб не отображалось постаянно / или в тру ничего не делать.
         requireContext().networkChanges
             .onEach {
                 when (it) {
@@ -115,157 +121,3 @@ class ListFragment : Fragment() {
         _binding = null
     }
 }
-
-
-//        checkNetWorkState()
-//        initRecyclerView(layoutManager)
-//        loadNewPage(pageCounter)
-//        swipeRefresh()
-
-
-//    private val personRepository by lazy(LazyThreadSafetyMode.NONE) {
-//        ServiceLocator.provideRepository()
-//    }
-//
-//    private val personDao by lazy(LazyThreadSafetyMode.NONE) {
-//        requireContext().appDataBase.personDao()
-//    }
-
-//
-//    private var pageCounter = 1
-//
-//    private var listForSubmitRetrofit: List<ItemType<CartoonPerson>> = emptyList()
-
-
-//    private fun checkNetWorkState() {
-//        requireContext().networkChanges
-//            .filter { isWorking ->
-//                !isWorking
-//            }
-//            .onEach {
-//                Toast.makeText(requireContext(), " Lost connection", Toast.LENGTH_SHORT).show()
-//                uploadCashPerson()
-//            }
-//            .launchIn(viewLifecycleOwner.lifecycleScope)
-//    }
-//
-//
-//    private fun uploadCashPerson() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            // fetch person from db
-//            // val listDao = personDao.getFirstTwenty()
-//            val listDao = personDao.getAllPersons()
-//            println("LIST DAO ==== $listDao")
-//            val listForSubmitDao = listDao.map {
-//                ItemType.Content(it)
-//            }
-//            personAdapter.submitList(listForSubmitDao)
-//        }
-//    }
-//
-//    private fun loadNewPage(pageForRequest: Int) {
-//
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            try {
-//                // uploadCashPerson()
-//                val tempList = personRepository.getUser(pageForRequest)
-//                val listPersons = tempList.results
-//
-//                personDao.insertPersons(listPersons)
-//                val content = listPersons.map {
-//                    ItemType.Content(it)
-//                }
-//                val resultList = content.plus(ItemType.Loading)
-//                val currentList = personAdapter.currentList.dropLast(1)
-//                listForSubmitRetrofit = (currentList + resultList)
-//                personAdapter.submitList(listForSubmitRetrofit)
-//
-//                isLoading = false
-//                binding.swipeLayout.isRefreshing = false
-//            } catch (e: Throwable) {
-//                error(e)
-//            }
-//        }
-//    }
-//
-//    private fun initRecyclerView(layoutManager: LinearLayoutManager) {
-//        with(binding) {
-//            recyclerView.apply {
-//                addSpaceDecoration(resources.getDimensionPixelSize(R.dimen.bottom_space))
-//                adapter = personAdapter
-//                recyclerView.layoutManager = layoutManager
-//                recyclerView.addPaginationScrollListener(layoutManager, 2) {
-//                    if (!isLoading) {
-//                        isLoading = true
-//                        pageCounter++
-//                        loadNewPage(pageCounter)
-//                    }
-//                }
-//            }
-//            toolbar.setOnClickListener {
-//                refreshListToStart()
-//            }
-//        }
-//    }
-//
-//    private fun refreshListToStart() {
-//        pageCounter = 1
-//        listForSubmitRetrofit = emptyList()
-//        personAdapter.submitList(listForSubmitRetrofit)
-//        loadNewPage(pageCounter)
-//
-//    }
-//
-//    private fun swipeRefresh() {
-//        binding.swipeLayout.setOnRefreshListener {
-//            refreshListToStart()
-//        }
-//    }
-
-//----tried do with flow
-//    private val _paginationFlow = MutableSharedFlow<Unit>()
-//    private val paginationFlow = _paginationFlow.asSharedFlow()
-//    private fun addScrollListener(layoutManager: LinearLayoutManager) {
-//
-//        with(binding) {
-//            recyclerView
-//                .paginationScrollFlow(layoutManager, 4) {
-//                    if (!isLoading) {
-//                        isLoading = true
-//                        loadNewPage(pageCounter)
-//                        pageCounter++
-//                        println("PAGE COUNTER = $pageCounter")
-//                    }
-//                }
-//                .filter { !isLoading }
-//                .onEach { isLoading = true }
-//                .map {
-//                    personRepository.getUser(pageCounter).results
-//                }
-//                .map {
-//                    it.map {
-//                        ItemType.Content(it)
-//                    }
-//                }
-//                .map {
-//                    it.plus(ItemType.Loading)
-//                }
-//                .onEach {
-//                    personAdapter.submitList(it)
-//                }
-//                .onEach {
-//                    isLoading = false
-//              //      println("PAGE COUNTER = $pageCounter")
-//                }
-//                .launchIn(viewLifecycleOwner.lifecycleScope)
-
-//            recyclerView.paginationScrollFlow(layoutManager, 1) {
-//                _paginationFlow.tryEmit(Unit)
-//                if (!isLoading) {
-//                    isLoading = true
-//                    pageCounter++
-//                    loadNewPage(pageCounter)
-//                }
-//            }
-//        }
-//    }

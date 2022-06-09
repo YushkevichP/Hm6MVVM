@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.*
 
 class ListViewModel(
     private val personRepository: PersonRepository,
-    private val personDao: PersonDao,
 ) : ViewModel() {
 
     private var isLoading = false
@@ -37,11 +36,12 @@ class ListViewModel(
                 .fold(
                     onSuccess = { it },
                     onFailure = {
-                        (personDao.getSomePersons(PAGE_SIZE, 0, currentPage)) }
+                        (personRepository.getSomePersons(PAGE_SIZE, 0, currentPage))
+                    }
                 )
         }
         .onEach {
-            personDao.insertPersons(it.map {
+            personRepository.insertPersons(it.map {
                 Person(
                     idApi = it.idApi,
                     nameApi = it.nameApi,
@@ -59,7 +59,7 @@ class ListViewModel(
         }
         .onStart {
 
-            emit(personDao.getSomePersons(PAGE_SIZE, 0, currentPage))
+            emit(personRepository.getSomePersons(PAGE_SIZE, 0, currentPage))
         }
         .shareIn(
             scope = viewModelScope,

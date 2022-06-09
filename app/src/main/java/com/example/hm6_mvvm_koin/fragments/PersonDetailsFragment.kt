@@ -15,7 +15,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.hm6_mvvm_koin.ServiceLocator
-import com.example.hm6_mvvm_koin.database.appDataBase
+
 import com.example.hm6_mvvm_koin.databinding.FragmentPersonDetailsBinding
 import com.example.hm6_mvvm_koin.viewmodels.PersonDetailsViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -33,11 +33,11 @@ class PersonDetailsFragment : Fragment() {
 
     private val viewModel by viewModels<PersonDetailsViewModel> {
         object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return PersonDetailsViewModel(
-                    @Suppress("UNCHECKED_CAST")
                     ServiceLocator.provideRepository(),
-                    requireContext().appDataBase.personDao()
+                   // requireContext().appDataBase.personDao()
                 ) as T
             }
         }

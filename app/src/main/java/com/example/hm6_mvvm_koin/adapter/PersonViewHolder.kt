@@ -5,17 +5,17 @@ import coil.load
 import coil.size.Scale
 import coil.size.ViewSizeResolver
 import com.example.hm6_mvvm_koin.databinding.ItemPersonBinding
-import com.example.hm6_mvvm_koin.model.CartoonPerson
+import com.example.hm6_mvvm_koin.model.Person
 import com.example.hm6_mvvm_koin.model.ItemType
 
 
 // сюда нужно передать вторым параметром еще инфу по фото или АПИ  https://youtu.be/IDVxFjLeecA?t=10544
 class PersonViewHolder(
     private val binding: ItemPersonBinding,
-    private val onUserClicked: (ItemType<CartoonPerson>) -> Unit,
+    private val onUserClicked: (ItemType<Person>) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(person: ItemType<CartoonPerson>) {
+    fun bind(person: ItemType<Person>) {
 
         val newPerson = person as ItemType.Content
 

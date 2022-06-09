@@ -101,7 +101,6 @@ class ListFragment : Fragment() {
 
         viewModel.dataFlow
             .onEach {
-
                 personAdapter.submitList(it.map {
                     ItemType.Content(it)
                 } + ItemType.Loading)

@@ -4,9 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hm6_mvvm_koin.PersonRepository
 import com.example.hm6_mvvm_koin.database.PersonDao
-import com.example.hm6_mvvm_koin.model.CartoonPerson
-import com.example.hm6_mvvm_koin.model.ItemType
-import com.example.hm6_mvvm_koin.model.LceState
+import com.example.hm6_mvvm_koin.model.Person
 
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
@@ -23,7 +21,6 @@ class ListViewModel(
         replay = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
     private var isRefreshed = false
-    private var cacheList = listOf<CartoonPerson>()
 
     val dataFlow = loadMoreFlow
         .filter { !isLoading }
@@ -45,7 +42,7 @@ class ListViewModel(
         }
         .onEach {
             personDao.insertPersons(it.map {
-                CartoonPerson(
+                Person(
                     idApi = it.idApi,
                     nameApi = it.nameApi,
                     imageApi = it.imageApi,
@@ -79,7 +76,7 @@ class ListViewModel(
     }
 
     companion object {
-        private const val PAGE_SIZE = 1
+        private const val PAGE_SIZE = 20
     }
 
     enum class LoadState {

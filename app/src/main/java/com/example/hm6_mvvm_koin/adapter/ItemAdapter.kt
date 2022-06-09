@@ -10,14 +10,14 @@ import com.example.hm6_mvvm_koin.adapter.LoadingViewHolder
 import com.example.hm6_mvvm_koin.adapter.PersonViewHolder
 import com.example.hm6_mvvm_koin.databinding.ItemLoadingBinding
 import com.example.hm6_mvvm_koin.databinding.ItemPersonBinding
-import com.example.hm6_mvvm_koin.model.CartoonPerson
+import com.example.hm6_mvvm_koin.model.Person
 import com.example.hm6_mvvm_koin.model.ItemType
 
 
 class ItemAdapter(
     context: Context,
-    private val onUserClicked: (ItemType<CartoonPerson>) -> Unit,
-) : ListAdapter<ItemType<CartoonPerson>, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
+    private val onUserClicked: (ItemType<Person>) -> Unit,
+) : ListAdapter<ItemType<Person>, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
@@ -62,17 +62,17 @@ class ItemAdapter(
         private const val TYPE_LOADING = 1
         private const val TYPE_ERROR = 3
 
-        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ItemType<CartoonPerson>>() {
+        private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ItemType<Person>>() {
             override fun areItemsTheSame(
-                oldItem: ItemType<CartoonPerson>,
-                newItem: ItemType<CartoonPerson>,
+                oldItem: ItemType<Person>,
+                newItem: ItemType<Person>,
             ): Boolean {
                 return oldItem == newItem
             }
 
             override fun areContentsTheSame(
-                oldItem: ItemType<CartoonPerson>,
-                newItem: ItemType<CartoonPerson>,
+                oldItem: ItemType<Person>,
+                newItem: ItemType<Person>,
             ): Boolean {
 
                 val oldPersonItem = oldItem as? ItemType.Content ?: return false

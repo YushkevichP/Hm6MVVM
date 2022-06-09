@@ -1,17 +1,25 @@
 package com.example.hm6_mvvm_koin.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.ui.setupWithNavController
 import coil.load
 import com.example.hm6_mvvm_koin.ServiceLocator
+import com.example.hm6_mvvm_koin.database.appDataBase
 import com.example.hm6_mvvm_koin.databinding.FragmentPersonDetailsBinding
+import com.example.hm6_mvvm_koin.viewmodels.PersonDetailsViewModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 
@@ -23,12 +31,19 @@ class PersonDetailsFragment : Fragment() {
             "VIEW WAS DESTROYED"
         }
 
-    private val personRepository by lazy(LazyThreadSafetyMode.NONE) {
-        ServiceLocator.provideRepository()
+    private val viewModel by viewModels<PersonDetailsViewModel> {
+        object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return PersonDetailsViewModel(
+                    @Suppress("UNCHECKED_CAST")
+                    ServiceLocator.provideRepository(),
+                    requireContext().appDataBase.personDao()
+                ) as T
+            }
+        }
     }
 
     private val args by navArgs<PersonDetailsFragmentArgs>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -44,17 +59,24 @@ class PersonDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.setupWithNavController(findNavController()) // back_arrow
+        val id = args.keyId
 
+        getDetails(id)
+    }
+
+    private fun getDetails(id: Int) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val id = args.keyId
-            val details = personRepository.fetchPersonDetails(id)
+            Log.d("LOG", "ВЬЮ МОДЕЛЬ ДОЛЖНА ВКЛ")
+            viewModel.fetchDetails(id)?.onEach {
+                Log.d("LOG", "флоу начинает $it")
 
-            with(binding) {
-                imageUserFragment.load(details.avatarApiDetails)
-                personGender.text = details.gender
-                personName.text = details.name
-                personStatus.text = details.status
-            }
+                with(binding) {
+                    imageUserFragment.load(it.avatarApiDetails)
+                    personGender.text = it.gender
+                    personName.text = it.name
+                    personStatus.text = it.status
+                }
+            }?.launchIn(viewLifecycleOwner.lifecycleScope)
         }
     }
 
@@ -63,3 +85,17 @@ class PersonDetailsFragment : Fragment() {
         _binding = null
     }
 }
+
+// можно запускать вот так, одно и то же
+//    private fun getDetails(id: Int) = with(binding) {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewModel.fetchDetails(id)
+//                ?.onEach { details ->
+//                    checkNotNull(details)
+//                    imageUserFragment.load(details.avatarApiDetails)
+//                    personGender.text = details.gender
+//                    personName.text = details.name
+//                    personStatus.text = details.status
+//                }?.launchIn(viewLifecycleOwner.lifecycleScope)
+//        }
+//    }

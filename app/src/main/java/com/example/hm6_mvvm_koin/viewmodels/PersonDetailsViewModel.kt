@@ -9,14 +9,12 @@ import kotlinx.coroutines.flow.flowOf
 
 class PersonDetailsViewModel(
     private val personRepository: PersonRepository,
-   // private val personDao: PersonDao,
 ) : ViewModel() {
 
     suspend fun fetchDetails(id: Int): Flow<PersonDetails>? {
         return personRepository.fetchPersonDetails(id)
             .map {
                 flowOf(it)
-            }
-            .getOrNull()
+            }.getOrNull()
     }
 }

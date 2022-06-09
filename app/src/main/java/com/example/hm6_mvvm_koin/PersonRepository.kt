@@ -23,7 +23,7 @@ class PersonRepository(
         }
     }
 
-    suspend fun getSomePersons(limit: Int, offset: Int, page: Int): List<Person> {
+    suspend fun getPersonsFromDB(limit: Int, offset: Int, page: Int): List<Person> {
         return rickMortyDao.getSomePersons(limit, offset, page)
     }
 

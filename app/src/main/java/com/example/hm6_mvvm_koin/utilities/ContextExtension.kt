@@ -55,15 +55,15 @@ val Context.networkChanges: Flow<Boolean>
         }
 
 
-val Context.isNetworkAvailable: Boolean
-    get() = getSystemService<ConnectivityManager>()?.let { manager ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            manager.getNetworkCapabilities(manager.activeNetwork)
-                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-        } else {
-            manager.activeNetworkInfo?.isConnected
-        }
-    } ?: false
+//val Context.isNetworkAvailable: Boolean
+//    get() = getSystemService<ConnectivityManager>()?.let { manager ->
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//            manager.getNetworkCapabilities(manager.activeNetwork)
+//                ?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+//        } else {
+//            manager.activeNetworkInfo?.isConnected
+//        }
+//    } ?: false
 
 
 //private fun networkState() {

@@ -3,7 +3,6 @@ package com.example.hm6_mvvm_koin.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.hm6_mvvm_koin.PersonRepository
-import com.example.hm6_mvvm_koin.database.PersonDao
 import com.example.hm6_mvvm_koin.model.Person
 
 import kotlinx.coroutines.channels.BufferOverflow
@@ -36,7 +35,7 @@ class ListViewModel(
                 .fold(
                     onSuccess = { it },
                     onFailure = {
-                        (personRepository.getSomePersons(PAGE_SIZE, 0, currentPage))
+                        (personRepository.getPersonsFromDB(PAGE_SIZE, 0, currentPage))
                     }
                 )
         }
@@ -58,8 +57,7 @@ class ListViewModel(
 
         }
         .onStart {
-
-            emit(personRepository.getSomePersons(PAGE_SIZE, 0, currentPage))
+            emit(personRepository.getPersonsFromDB(PAGE_SIZE, 0, currentPage))
         }
         .shareIn(
             scope = viewModelScope,
@@ -76,7 +74,7 @@ class ListViewModel(
     }
 
     companion object {
-        private const val PAGE_SIZE = 20
+        private const val PAGE_SIZE = 2
     }
 
     enum class LoadState {

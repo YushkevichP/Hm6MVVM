@@ -32,7 +32,7 @@ class PersonDetailsFragment : Fragment() {
             "VIEW WAS DESTROYED"
         }
 
- //   private val persontRepository by inject<PersonRepository>()
+ //  private val persontRepository by inject<PersonRepository>()
     private val viewModel by viewModel<PersonDetailsViewModel>()
 
 //    private val viewModel by viewModels<PersonDetailsViewModel> {

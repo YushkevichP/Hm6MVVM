@@ -34,22 +34,11 @@ class ListFragment : Fragment() {
         get() = requireNotNull(_binding) {
             "View was destroyed"
         }
-    //denendancy injection
-//    private val persontRepository by inject<PersonRepository>()
-//    private val appDataBase by inject<AppDatabase>()
-    private val viewModel by viewModel<ListViewModel>()
+    //denendancy injection if needed repo or db
+    // private val persontRepository by inject<PersonRepository>()
+    // private val appDataBase by inject<AppDatabase>()
 
-//    private val viewModel by viewModels<ListViewModel> {
-//        object : ViewModelProvider.Factory {
-//            @Suppress("UNCHECKED_CAST")
-//            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-//                return ListViewModel(
-//                    persontRepository,
-//                    appDataBase.personDao()
-//                ) as T
-//            }
-//        }
-//    }
+    private val viewModel by viewModel<ListViewModel>()
 
     private val personAdapter by lazy(LazyThreadSafetyMode.NONE) {
         ItemAdapter(requireContext()) { item ->
@@ -73,7 +62,6 @@ class ListFragment : Fragment() {
     @SuppressLint("ShowToast")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // для первой подгрузки в список
         viewModel.onLoadMore()
 
@@ -89,7 +77,7 @@ class ListFragment : Fragment() {
                 }
             }.launchIn(viewLifecycleOwner.lifecycleScope)
 
-        //recucler init
+        //recycler init
         with(binding) {
             val layoutManager = LinearLayoutManager(requireContext())
             recyclerView.layoutManager = layoutManager
@@ -98,6 +86,8 @@ class ListFragment : Fragment() {
             swipeLayout.setOnRefreshListener {
                 viewModel.onRefresh()
             }
+
+            //todo при первой подгрузке изпаджинешн оказывается внизу списка и начинает грузить вторую страничку
             recyclerView.addPaginationScrollFlow(layoutManager, 1)
                 .onEach {
                     viewModel.onLoadMore()
